@@ -9,6 +9,7 @@ import { schema } from '@kbn/config-schema';
 import { validateDurationV1, validateHoursV1, validateTimezoneV1 } from '../../../validation';
 import { notifyWhenSchemaV1, alertDelaySchemaV1 } from '../../../response';
 import { alertsFilterQuerySchemaV1 } from '../../../../alerts_filter_query';
+import { flappingSchemaV1 } from '../../../common';
 
 export const actionFrequencySchema = schema.object({
   summary: schema.boolean({
@@ -186,13 +187,14 @@ export const createBodySchema = schema.object({
   actions: schema.arrayOf(actionSchema, { defaultValue: [] }),
   notify_when: schema.maybe(schema.nullable(notifyWhenSchemaV1)),
   alert_delay: schema.maybe(alertDelaySchemaV1),
+  flapping: schema.maybe(schema.nullable(flappingSchemaV1)),
 });
 
 export const createParamsSchema = schema.object({
   id: schema.maybe(
     schema.string({
       meta: {
-        description: 'The identifier for the rule.',
+        description: 'The identifier for the rule. If it is omitted, an ID is randomly generated.',
       },
     })
   ),
