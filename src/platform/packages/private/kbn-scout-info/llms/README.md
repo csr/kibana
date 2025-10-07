@@ -5,6 +5,7 @@ These AI prompts help automate the conversion of existing FTR tests to the [Scou
 ## What's included
 
 - `ftr-to-scout-skeleton-guide.md` - A prompt you can use to convert an FTR test to a Scout skeleton test
+- `generate-scout-skeleton-from-ftr-test.md` - A prompt you can use to generate a Scout page object from an existing FTR test
 - `what-is-scout.md` - Overview of the Scout framework, its features, fixtures, and how to write API and UI tests
 
 ### Requirements
@@ -27,7 +28,7 @@ Generate an empty Scout skeleton from this file:
 @src/platform/test/functional/apps/discover/group4/_document_comparison.ts
 
 Instructions:
-@src/platform/packages/private/kbn-scout-info/llms/generate-scout-skeleton-from-ftr-test.md contains instructions on how to convert a test
+@src/platform/packages/private/kbn-scout-info/llms/generate-scout-skeleton-from-ftr-test.md contains instructions on how to perform this task
 @src/platform/packages/private/kbn-scout-info/llms/what-is-scout.md contains a high-level description of the Scout framework
 ```
 
@@ -35,3 +36,18 @@ Instructions:
 > This prompt uses Claude's `@path/to/import` [syntax](https://docs.claude.com/en/docs/claude-code/memory).
 
 **Sample output**: available [here](https://gist.github.com/csr/71e635d856154df64f7d1ccb7e8333df).
+
+## Generate Scout page objects from an existing FTR test
+
+**Sample prompt** (replace the FTR test file path as needed):
+
+```
+Generate a Scout page object for this FTR file:
+
+@src/platform/test/functional/apps/discover/group4/_document_comparison.ts
+
+Instructions:
+@src/platform/packages/private/kbn-scout-info/llms/generate-scout-page-objects.md contains instructions on how to perform this task
+@src/platform/packages/private/kbn-scout-info/llms/what-is-scout.md contains a high-level description of the Scout framework
+@src/platform/packages/private/kbn-scout-info/llms/scout-page-objects.md contains a high-level overview of page objects in Scout
+```
