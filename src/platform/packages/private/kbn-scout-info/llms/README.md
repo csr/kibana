@@ -44,7 +44,7 @@ Instructions:
 ```
 Generate a Scout page object for this FTR file:
 
-@src/platform/test/functional/apps/discover/group4/_document_comparison.ts
+@x-pack/solutions/observability/test/functional/apps/uptime/settings.ts
 
 Instructions:
 @src/platform/packages/private/kbn-scout-info/llms/generate-scout-page-objects.md contains instructions on how to perform this task
