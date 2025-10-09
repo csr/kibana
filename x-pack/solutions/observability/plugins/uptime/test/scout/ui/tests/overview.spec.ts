@@ -12,7 +12,7 @@ const UPTIME_HEARTBEAT_DATA =
 const DEFAULT_NAVIGATION_SEARCH =
   'dateRangeEnd=2019-09-11T19:40:08.078Z&dateRangeStart=2019-09-10T12:40:08.078Z';
 
-test.describe('overview page', () => {
+test.describe('overview page', { tag: ['@ess', '@svlOblt'] }, () => {
   test.beforeAll(async ({ esArchiver }) => {
     await esArchiver.loadIfNeeded(UPTIME_HEARTBEAT_DATA);
   });
