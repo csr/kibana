@@ -53,14 +53,16 @@ export class UptimePage {
    * Check if a monitor ID exists on the page
    */
   async monitorIdExists(monitorId: string) {
-    await this.page.testSubj.waitFor(monitorId, { state: 'visible', timeout: 10000 });
+    await this.page.testSubj.locator(monitorId).waitFor({ state: 'visible', timeout: 10000 });
   }
 
   /**
    * Check if a monitor page link exists
    */
   async monitorPageLinkExists(monitorId: string) {
-    await this.page.testSubj.waitFor(`monitor-page-link-${monitorId}`, { state: 'visible' });
+    await this.page.testSubj
+      .locator(`monitor-page-link-${monitorId}`)
+      .waitFor({ state: 'visible' });
   }
 
   /**
@@ -102,7 +104,7 @@ export class UptimePage {
    * Check if the page has mappings error
    */
   async hasMappingsError() {
-    await this.page.testSubj.waitFor('uptimeMappingsErrorCallout', { state: 'visible' });
+    await this.page.testSubj.locator('uptimeMappingsErrorCallout').waitFor({ state: 'visible' });
   }
 
   /**
