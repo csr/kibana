@@ -318,7 +318,27 @@ test.describe('filter by map extent', () => {
 
 ## Output Format
 
-IMPORTANT. Don't make changes to the codebase. Simply present the code to the user. In most cases you won't need to search around in the codebase.
+### File creation
+
+You can create Scout files under the `<plugin-path>/test/scout/ui/tests` folder. You must also create a Playwright config at `<plugin-path>/test/scout/ui/playwright.config.ts`. The Playwright config will look like this:
+
+```ts
+/*
+ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
+ * or more contributor license agreements. Licensed under the Elastic License
+ * 2.0; you may not use this file except in compliance with the Elastic License
+ * 2.0.
+ */
+
+// update Scout package import based on plugin's file path
+import { createPlaywrightConfig } from '@kbn/scout';
+
+export default createPlaywrightConfig({
+  testDir: './tests',
+});
+```
+
+IMPORTANT: you can make changes to the codebase if necessary. Create one or more files.
 
 Structure your response like this:
 
