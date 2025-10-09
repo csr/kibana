@@ -21,7 +21,7 @@ test.describe('uptime settings page', { tag: ['@ess', '@svlOblt'] }, () => {
   test.beforeEach(async ({ pageObjects, esClient, browserAuth }) => {
     await browserAuth.loginAsAdmin();
     await makeChecks(esClient, 'myMonitor', 1, 1, 1);
-    await pageObjects.uptime.goToRoot(true);
+    await pageObjects.uptime.goto();
   });
 
   test('loads the default settings', async ({ pageObjects }) => {
@@ -62,7 +62,7 @@ test.describe('uptime settings page', { tag: ['@ess', '@svlOblt'] }, () => {
     await pageObjects.uptime.changeHeartbeatIndicesInput(newHeartbeatIndices);
     await pageObjects.uptime.applySettings();
 
-    await pageObjects.uptime.goToRoot(true);
+    await pageObjects.uptime.goto();
 
     // We should no longer find any monitors since the new pattern matches nothing
     expect(await pageObjects.uptime.pageHasDataMissing()).toBe(true);
@@ -82,7 +82,7 @@ test.describe('uptime settings page', { tag: ['@ess', '@svlOblt'] }, () => {
     await pageObjects.uptime.changeErrorThresholdInput(newExpirationThreshold);
     await pageObjects.uptime.applySettings();
 
-    await pageObjects.uptime.goToRoot();
+    await pageObjects.uptime.goto();
 
     // Verify that the settings page shows the value we previously saved
     await pageObjects.uptime.goToSettings();
@@ -99,7 +99,7 @@ test.describe('uptime settings page', { tag: ['@ess', '@svlOblt'] }, () => {
     await pageObjects.uptime.changeWarningThresholdInput(newAgeThreshold);
     await pageObjects.uptime.applySettings();
 
-    await pageObjects.uptime.goToRoot();
+    await pageObjects.uptime.goto();
 
     // Verify that the settings page shows the value we previously saved
     await pageObjects.uptime.goToSettings();

@@ -17,27 +17,15 @@ export class UptimePage {
 
   /**
    * Navigate to the uptime application
+   * @param search - Optional query string parameters (e.g., 'dateRangeEnd=...&dateRangeStart=...')
    */
-  async goto() {
-    await this.page.gotoApp('uptime');
-    await this.page.waitForLoadingIndicatorHidden();
-  }
-
-  /**
-   * Navigate to uptime root and optionally refresh
-   */
-  async goToRoot(refresh?: boolean) {
-    await this.goto();
-    if (refresh) {
-      await this.refreshApp();
+  async goto(search?: string) {
+    if (search) {
+      await this.page.gotoApp('uptime', { hash: `/?${search}` });
+    } else {
+      await this.page.gotoApp('uptime');
     }
-  }
-
-  /**
-   * Refresh the application by clicking the date picker apply button
-   */
-  async refreshApp() {
-    await this.page.testSubj.click('superDatePickerApplyTimeButton', { timeout: 10000 });
+    await this.page.waitForLoadingIndicatorHidden();
   }
 
   /**
@@ -76,11 +64,31 @@ export class UptimePage {
   }
 
   /**
-   * Check if URL contains a specific value
+   * Verify that the page displays the expected monitor IDs
+   * @param monitorIds - Array of monitor IDs that should be visible on the page
    */
-  async urlContains(value: string): Promise<boolean> {
+  async pageHasExpectedIds(monitorIds: string[]): Promise<void> {
+    await this.page.waitForLoadingIndicatorHidden();
+
+    for (const monitorId of monitorIds) {
+      await this.monitorPageLinkExists(monitorId);
+    }
+  }
+
+  /**
+   * Check if URL contains a specific value
+   * @param value - The value to check for in the URL
+   * @param shouldContain - Whether the URL should contain the value (default: true)
+   */
+  async pageUrlContains(value: string, shouldContain: boolean = true): Promise<void> {
     const url = this.page.url();
-    return url.includes(value);
+    const contains = url.includes(value);
+    if (shouldContain && !contains) {
+      throw new Error(`Expected URL to contain "${value}", but it doesn't. URL: ${url}`);
+    }
+    if (!shouldContain && contains) {
+      throw new Error(`Expected URL not to contain "${value}", but it does. URL: ${url}`);
+    }
   }
 
   /**
@@ -141,6 +149,14 @@ export class UptimePage {
   }
 
   /**
+   * Set filter query text in the query bar
+   * Alias for setFilterText for compatibility with FTR tests
+   */
+  async inputFilterQuery(filterQuery: string) {
+    await this.setFilterText(filterQuery);
+  }
+
+  /**
    * Set status filter to 'up'
    */
   async setStatusFilterUp() {
@@ -152,6 +168,18 @@ export class UptimePage {
    */
   async setStatusFilterDown() {
     await this.page.testSubj.click('xpack.synthetics.filterBar.filterStatusDown');
+  }
+
+  /**
+   * Set status filter by value ('up' or 'down')
+   * @param status - The status filter to set ('up' or 'down')
+   */
+  async setStatusFilter(status: 'up' | 'down') {
+    if (status === 'up') {
+      await this.setStatusFilterUp();
+    } else {
+      await this.setStatusFilterDown();
+    }
   }
 
   /**
@@ -218,6 +246,18 @@ export class UptimePage {
    */
   async goToNextPage() {
     await this.page.testSubj.click('xpack.uptime.monitorList.nextButton', { timeout: 5000 });
+  }
+
+  /**
+   * Change pagination page
+   * @param direction - The direction to navigate ('next' or 'prev')
+   */
+  async changePage(direction: 'next' | 'prev') {
+    if (direction === 'next') {
+      await this.goToNextPage();
+    } else {
+      await this.page.testSubj.click('xpack.uptime.monitorList.prevButton', { timeout: 5000 });
+    }
   }
 
   /**
