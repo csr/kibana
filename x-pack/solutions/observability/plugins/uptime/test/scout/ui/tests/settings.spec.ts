@@ -63,7 +63,6 @@ test.describe('uptime settings page', { tag: ['@ess', '@svlOblt'] }, () => {
     await pageObjects.uptime.applySettings();
 
     await pageObjects.uptime.goToRoot(true);
-    await pageObjects.uptime.waitUntilDataIsLoaded();
 
     // We should no longer find any monitors since the new pattern matches nothing
     expect(await pageObjects.uptime.pageHasDataMissing()).toBe(true);
