@@ -19,9 +19,9 @@ export class UptimePage {
    * Navigate to the uptime application
    * @param search - Optional query string parameters (e.g., 'dateRangeEnd=...&dateRangeStart=...')
    */
-  async goto(search?: string) {
+  async goto(search?: string, params: Record<string, any> = {}) {
     if (search) {
-      await this.page.gotoApp('uptime', { hash: `/?${search}` });
+      await this.page.gotoApp('uptime', { params });
     } else {
       await this.page.gotoApp('uptime');
     }

@@ -6,6 +6,7 @@
  */
 
 import { expect, test } from '../fixtures';
+import { deleteUptimeSettingsObject } from '../fixtures/helpers/uptime_api_services';
 
 const UPTIME_HEARTBEAT_DATA =
   'x-pack/solutions/observability/test/fixtures/es_archives/uptime/full_heartbeat';
@@ -13,13 +14,17 @@ const DEFAULT_NAVIGATION_SEARCH =
   'dateRangeEnd=2019-09-11T19:40:08.078Z&dateRangeStart=2019-09-10T12:40:08.078Z';
 
 test.describe('overview page', { tag: ['@ess'] }, () => {
-  test.beforeAll(async ({ esArchiver }) => {
+  test.beforeAll(async ({ esArchiver, kbnClient }) => {
+    deleteUptimeSettingsObject(kbnClient);
     await esArchiver.loadIfNeeded(UPTIME_HEARTBEAT_DATA);
   });
 
   test.beforeEach(async ({ browserAuth, pageObjects }) => {
     await browserAuth.loginAsAdmin();
-    await pageObjects.uptime.goto(DEFAULT_NAVIGATION_SEARCH);
+    await pageObjects.uptime.goto(DEFAULT_NAVIGATION_SEARCH, {
+      dateRangeEnd: '2019-09-11T19:40:08.078Z',
+      dateRangeStart: '2019-09-10T12:40:08.078Z',
+    });
     await pageObjects.uptime.resetFilters();
   });
 

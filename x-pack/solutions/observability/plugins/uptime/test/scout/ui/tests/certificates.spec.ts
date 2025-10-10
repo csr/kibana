@@ -24,7 +24,7 @@ test.describe('certificates', { tag: ['@ess', '@svlOblt'] }, () => {
 
     test.beforeEach(async ({ pageObjects, browserAuth }) => {
       await browserAuth.loginAsAdmin();
-      await pageObjects.uptime.goToRoot(true);
+      await pageObjects.uptime.goto();
     });
 
     test('go to certs page', async ({ page, pageObjects }) => {
@@ -54,7 +54,7 @@ test.describe('certificates', { tag: ['@ess', '@svlOblt'] }, () => {
 
     test.beforeEach(async ({ esClient, pageObjects, browserAuth }) => {
       await browserAuth.loginAsAdmin();
-      await pageObjects.uptime.goToRoot(true);
+      await pageObjects.uptime.goto();
       await makeCheck({ es: esClient, tls: true });
     });
 
@@ -70,7 +70,7 @@ test.describe('certificates', { tag: ['@ess', '@svlOblt'] }, () => {
     test.describe('page', () => {
       test.beforeEach(async ({ pageObjects }) => {
         await pageObjects.uptime.goToCertificates();
-        await pageObjects.uptime.refreshApp();
+        // await pageObjects.uptime.refreshApp();
       });
 
       test('displays certificates', async ({ page, pageObjects }) => {
@@ -87,7 +87,7 @@ test.describe('certificates', { tag: ['@ess', '@svlOblt'] }, () => {
           tls: { sha256: certId },
         });
 
-        await pageObjects.uptime.refreshApp();
+        // await pageObjects.uptime.refreshApp();
         await pageObjects.uptime.certificateExists(certId, monitorId);
 
         // Verify the certificate and monitor link are visible
@@ -111,7 +111,7 @@ test.describe('certificates', { tag: ['@ess', '@svlOblt'] }, () => {
           tls: { sha256: certId },
         });
 
-        await pageObjects.uptime.refreshApp();
+        // await pageObjects.uptime.refreshApp();
         await pageObjects.uptime.searchCertificates(monitorId);
         await pageObjects.uptime.hasCertificates();
 
