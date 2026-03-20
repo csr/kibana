@@ -253,10 +253,6 @@ export const coreWorkerFixtures = base.extend<{}, CoreWorkerFixtures>({
         return { cookieValue, cookieHeader };
       };
 
-      // Hide the announcements (including the sidenav tour) in advance to prevent
-      // it from interfering with test flows
-      await kbnClient.uiSettings.updateGlobal({ hideAnnouncements: true });
-
       // disable solution tour on ECH
       if (config.isCloud && !config.serverless) {
         log.info('Disabling Space Solution Tour globally on ECH deployment');
