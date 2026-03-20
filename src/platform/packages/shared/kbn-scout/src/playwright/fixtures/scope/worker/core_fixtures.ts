@@ -255,7 +255,13 @@ export const coreWorkerFixtures = base.extend<{}, CoreWorkerFixtures>({
 
       // Hide the announcements (including the sidenav tour) in advance to prevent
       // it from interfering with test flows
-      await kbnClient.uiSettings.updateGlobal({ hideAnnouncements: true });
+      if (config.isCloud && !config.serverless) {
+        // Hide the announcements (including the sidenav tour) in the default space
+        // Elastic Cloud Hosted still doesn't support this global setting
+        await kbnClient.uiSettings.update({ hideAnnouncements: true });
+      } else {
+        await kbnClient.uiSettings.updateGlobal({ hideAnnouncements: true });
+      }
 
       // disable solution tour on ECH
       if (config.isCloud && !config.serverless) {
