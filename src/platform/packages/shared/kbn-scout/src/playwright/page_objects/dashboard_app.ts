@@ -235,7 +235,14 @@ export class DashboardApp {
         await this.page.testSubj.clearInput('savedObjectFinderSearchInput');
       }
       await this.page.testSubj.typeWithDelay('savedObjectFinderSearchInput', names[i]);
-      await this.page.testSubj.click(`savedObjectTitle${names[i].replace(/ /g, '-')}`);
+      // Typing in the finder triggers an async saved-object query; wait for it
+      // to settle before trying to click the title, otherwise the title button
+      // may not be rendered yet when the test server is under load (e.g. when
+      // this config runs late in a Scout lane). See issue #260857.
+      await expect(this.savedObjectFinderLoadingIndicator).toBeHidden({ timeout: 30_000 });
+      const titleSelector = `savedObjectTitle${names[i].replace(/ /g, '-')}`;
+      await expect(this.page.testSubj.locator(titleSelector)).toBeVisible();
+      await this.page.testSubj.click(titleSelector);
       await this.page.testSubj.waitForSelector(
         `embeddablePanelHeading-${names[i].replace(/[- ]/g, '')}`,
         {
