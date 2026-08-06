@@ -100,3 +100,23 @@ Follow existing patterns in the target area first; below are common defaults.
 - Make focused changes; avoid unrelated refactors.
 - Update docs and tests when behavior or usage changes.
 - Never remove, skip, or comment out tests to make them pass; fix the underlying code.
+
+## Cursor Cloud specific instructions
+
+The VM startup update script already runs `yarn kbn bootstrap` (with Node from nvm). The notes below are runtime/startup caveats, not install steps.
+
+### Toolchain
+- Node version is pinned by `.node-version` (currently `24.18.0`) and is managed via `nvm` (nvm's `default` alias points at it). Interactive/login shells pick it up automatically via `~/.bashrc`. In a bare non-interactive shell, `node` may not be on `PATH`; source nvm first (`export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"`) or run through a login shell. Do NOT rely on `/exec-daemon/node` (that is a different, older Node).
+- Package manager is Yarn v1 (classic). Re-run `yarn kbn bootstrap` after switching branches or on dependency errors.
+
+### Services (run in separate long-lived terminals, e.g. tmux)
+- **Elasticsearch**: `node scripts/es snapshot --license trial`. Listens on `http://localhost:9200`, dev creds `elastic` / `changeme`. First run downloads the ES snapshot into `.es/` (persists). On its first start ES also downloads the ELSER ML model in the background, which briefly pins CPU near 100%.
+- **Kibana** (dev): `node scripts/kibana --dev` (add `--no-base-path` to serve at `/` on port 5601; default creds `elastic`/`changeme`). Start ES first and let it reach a steady state before/while starting Kibana.
+- Kibana is only truly ready when the log prints `Kibana is now available` — the earlier `http server running at http://localhost:5601` line appears well before the app is usable.
+
+### @kbn/optimizer gotcha (important)
+- On first `--dev` boot, `@kbn/optimizer` compiles ~223 browser bundles (several minutes). If a worker is killed mid-build (e.g. CPU/memory contention with ES's ELSER download on a cold VM), it can leave a **corrupt cache**: a later start logs `all bundles cached` yet some bundles 404 (served as `application/json`) and the UI shows **"Elastic did not load properly"** after login.
+- Fix: restart Kibana once with `node scripts/kibana --dev --no-base-path --no-cache` to force a clean full rebuild of all bundles. Clearing `data/optimize` alone is NOT enough — the per-bundle cache lives in each module's `target/public/.kbn-optimizer-cache`, which `--no-cache` bypasses.
+
+### Verifying changes
+- Lint / type-check / Jest commands are documented above (see Testing and Code Style sections). Scope them to specific files/projects; repo-wide runs are very slow.
