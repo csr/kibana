@@ -12,8 +12,14 @@ import { buildScoutTargetInfo } from './target_info';
 // The location/arch/domain env vars are read once at module load, so only the attributes can
 // be varied from here. That is the part these tests are about.
 describe('buildScoutTargetInfo', () => {
+  const ELASTIC_CLOUD_VARS = [
+    'SCOUT_TARGET_ELASTIC_CLOUD_PROJECT_ID',
+    'SCOUT_TARGET_ELASTIC_CLOUD_DEPLOYMENT_ID',
+    'SCOUT_TARGET_ELASTIC_CLOUD_REGION',
+    'SCOUT_TARGET_ELASTIC_CLOUD_ENVIRONMENT',
+  ] as const;
   const originalTargetAttributes = process.env.SCOUT_TARGET_ATTRIBUTES;
-  const originalProjectId = process.env.SCOUT_TARGET_ELASTIC_CLOUD_PROJECT_ID;
+  const originalElasticCloud = ELASTIC_CLOUD_VARS.map((name) => [name, process.env[name]] as const);
 
   afterEach(() => {
     if (originalTargetAttributes === undefined) {
@@ -21,15 +27,19 @@ describe('buildScoutTargetInfo', () => {
     } else {
       process.env.SCOUT_TARGET_ATTRIBUTES = originalTargetAttributes;
     }
-    if (originalProjectId === undefined) {
-      delete process.env.SCOUT_TARGET_ELASTIC_CLOUD_PROJECT_ID;
-    } else {
-      process.env.SCOUT_TARGET_ELASTIC_CLOUD_PROJECT_ID = originalProjectId;
+    for (const [name, value] of originalElasticCloud) {
+      if (value === undefined) {
+        delete process.env[name];
+      } else {
+        process.env[name] = value;
+      }
     }
   });
 
   it('records the Elastic Cloud project the run targets, when one is declared', () => {
-    delete process.env.SCOUT_TARGET_ELASTIC_CLOUD_PROJECT_ID;
+    for (const name of ELASTIC_CLOUD_VARS) {
+      delete process.env[name];
+    }
     expect(buildScoutTargetInfo().elastic_cloud).toBeUndefined();
 
     process.env.SCOUT_TARGET_ELASTIC_CLOUD_PROJECT_ID = '3f1c9a';
